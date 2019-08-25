@@ -12,10 +12,10 @@ RUN             set -ex \
 
 WORKDIR         /app
 
-COPY            scripts/prestart.sh /prestart.sh
-COPY            scripts/start.sh /start.sh
-COPY            scripts/start-reload.sh /start-reload.sh
-COPY            scripts/gunicorn_conf.py /gunicorn_conf.py
+COPY            build/prestart.sh /prestart.sh
+COPY            build/start.sh /start.sh
+COPY            build/start-reload.sh /start-reload.sh
+COPY            build/gunicorn_conf.py /gunicorn_conf.py
 
 ONBUILD COPY    requirements /requirements
 
