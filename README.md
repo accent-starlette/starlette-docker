@@ -4,9 +4,11 @@ For use in conjunction with [https://github.com/accent-starlette/boilerplate](ht
 
 Example `Dockerfile`:
 
-    FROM        accent/starlette-docker:3.7-alpine
-
+    ARG         EXTRA_DEPS
+    ARG         EXTRA_BUILD_DEPS
     ARG         REQUIREMENTS_FILE=/requirements/base.txt
+
+    FROM        accent/starlette-docker:3.7-alpine
 
     ENV         APP_MODULE=app.main:app \
                 ALLOWED_HOSTS="*" \

@@ -1,4 +1,4 @@
-FROM            python:3.7-alpine
+FROM            python:3.7
 
 ONBUILD ARG     EXTRA_DEPS
 ONBUILD ARG     EXTRA_BUILD_DEPS
@@ -15,14 +15,12 @@ ONBUILD COPY    requirements /requirements
 
 ONBUILD RUN     set -ex \
                 && if [ "x$REQUIREMENTS_FILE" = "x" ] ; then REQUIREMENTS="/requirements/base.txt" ; else REQUIREMENTS="$REQUIREMENTS_FILE" ; fi \
-                && apk update \
-                && apk add --no-cache --virtual .build-deps gcc git libc-dev linux-headers make musl-dev postgresql-dev \
-                && apk add --no-cache --virtual .build-deps-extra $EXTRA_BUILD_DEPS \
-                && apk add --no-cache jpeg-dev libpq zlib-dev \
-                && apk add --no-cache $EXTRA_DEPS \
+                && apt-get update \
+                && apt-get install -y gcc git make $EXTRA_BUILD_DEPS --no-install-recommends \
+                && apt-get install -y libjpeg-dev libmagic-dev libpq-dev $EXTRA_DEPS --no-install-recommends \
                 && pip install --no-cache-dir -r $REQUIREMENTS \
-                && apk del --no-cache .build-deps \
-                && apk del --no-cache .build-deps-extra
+                && apt-get remove -y gcc git make $EXTRA_BUILD_DEPS --purge \
+                && rm -rf /var/lib/apt/lists/
 
 ONBUILD COPY    ./src /app
 
