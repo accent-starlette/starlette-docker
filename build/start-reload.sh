@@ -6,4 +6,4 @@ PORT=${PORT:-80}
 LOG_LEVEL=${LOG_LEVEL:-info}
 
 # Start Uvicorn with live reload
-uvicorn --reload --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE"
+uvicorn --reload --reload-dir /app --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE"
