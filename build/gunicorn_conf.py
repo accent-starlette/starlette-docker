@@ -7,7 +7,7 @@ web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
 host = os.getenv("HOST", "0.0.0.0")
 port = os.getenv("PORT", "80")
 use_loglevel = os.getenv("LOG_LEVEL", "info")
-bind = f"{host}:{port}"
+timeout_str = os.getenv("TIMEOUT", "30")
 
 cores = multiprocessing.cpu_count()
 workers_per_core = float(workers_per_core_str)
@@ -20,7 +20,9 @@ else:
 
 # Gunicorn config variables
 loglevel = use_loglevel
+bind = f"{host}:{port}"
 workers = web_concurrency
+timeout = int(timeout_str)
 keepalive = 120
 errorlog = "-"
 
@@ -29,6 +31,8 @@ log_data = {
     "loglevel": loglevel,
     "workers": workers,
     "bind": bind,
+    "timeout": timeout,
+    "keepalive": keepalive,
     # Additional, non-gunicorn variables
     "workers_per_core": workers_per_core,
     "host": host,
