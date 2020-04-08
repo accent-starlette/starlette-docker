@@ -1,38 +1,42 @@
 import json
 import multiprocessing
-import os
+from os import getenv
 
-workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
-web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
-host = os.getenv("HOST", "0.0.0.0")
-port = os.getenv("PORT", "80")
-use_loglevel = os.getenv("LOG_LEVEL", "info")
-timeout_str = os.getenv("TIMEOUT", "30")
 
-cores = multiprocessing.cpu_count()
+workers_per_core_str = getenv("WORKERS_PER_CORE", "1")
+workers_str = getenv("WORKERS", None)
+host = getenv("HOST", "0.0.0.0")
+port = getenv("PORT", "80")
+loglevel_str = getenv("LOG_LEVEL", "info")
+timeout_str = getenv("TIMEOUT", "30")
+max_requests_str = getenv("MAX_REQUESTS", "250")
+
 workers_per_core = float(workers_per_core_str)
-default_web_concurrency = workers_per_core * cores
-if web_concurrency_str:
-    web_concurrency = int(web_concurrency_str)
-    assert web_concurrency > 0
+
+if workers_str:
+    num_workers = int(workers_str)
+    assert num_workers > 0
 else:
-    web_concurrency = max(int(default_web_concurrency), 2)
+    cores = multiprocessing.cpu_count()
+    num_workers = max(int(workers_per_core * cores), 2)
 
 # Gunicorn config variables
-loglevel = use_loglevel
 bind = f"{host}:{port}"
-workers = web_concurrency
+workers = num_workers
+max_requests = int(max_requests_str)
 timeout = int(timeout_str)
-keepalive = 120
+preload_app = True
+loglevel = loglevel_str
 errorlog = "-"
 
 # For debugging and testing
 log_data = {
-    "loglevel": loglevel,
-    "workers": workers,
     "bind": bind,
+    "workers": workers,
+    "max_requests": max_requests,
     "timeout": timeout,
-    "keepalive": keepalive,
+    "preload_app": preload_app,
+    "loglevel": loglevel,
     # Additional, non-gunicorn variables
     "workers_per_core": workers_per_core,
     "host": host,
