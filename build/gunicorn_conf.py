@@ -27,6 +27,7 @@ max_requests = int(max_requests_str)
 timeout = int(timeout_str)
 preload_app = True
 loglevel = loglevel_str
+accesslog = "-"
 errorlog = "-"
 
 # For debugging and testing
