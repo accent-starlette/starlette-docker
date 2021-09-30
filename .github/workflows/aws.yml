@@ -1,0 +1,83 @@
+# This workflow will build and push a new container image to Amazon ECR
+
+on:
+  push:
+    branches:
+      - master
+
+name: Deploy to Amazon ECS
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Login to Public ECR
+      uses: docker/login-action@v1
+      with:
+        registry: public.ecr.aws
+        username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      env:
+        AWS_REGION: us-east-1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image-latest
+      env:
+        ECR_REGISTRY: public.ecr.aws/g3c5k4i8
+        ECR_REPOSITORY: starlette-docker
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        
+    - name: Build image 3.7, tag, and push image to Amazon ECR
+      id: build-image-3-7
+      env:
+        ECR_REGISTRY: public.ecr.aws/g3c5k4i8
+        ECR_REPOSITORY: starlette-docker
+        IMAGE_TAG: "3.7"
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $IMAGE_TAG/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    - name: Build image 3.7-alpine, tag, and push image to Amazon ECR
+      id: build-image-3-7-alpine
+      env:
+        ECR_REGISTRY: public.ecr.aws/g3c5k4i8
+        ECR_REPOSITORY: starlette-docker
+        IMAGE_TAG: "3.7-alpine"
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $IMAGE_TAG/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    - name: Build image 3.8, tag, and push image to Amazon ECR
+      id: build-image-3-8
+      env:
+        ECR_REGISTRY: public.ecr.aws/g3c5k4i8
+        ECR_REPOSITORY: starlette-docker
+        IMAGE_TAG: "3.8"
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $IMAGE_TAG/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    - name: Build image 3.8-alpine, tag, and push image to Amazon ECR
+      id: build-image-3-8-alpine
+      env:
+        ECR_REGISTRY: public.ecr.aws/g3c5k4i8
+        ECR_REPOSITORY: starlette-docker
+        IMAGE_TAG: "3.8-alpine"
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $IMAGE_TAG/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        
